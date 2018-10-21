@@ -1,0 +1,283 @@
+<!DOCTYPE>
+<html>
+<head>
+  <link type="text/css" rel="stylesheet" href="stylesheet.css">
+</head>
+<body>
+<div class="vertical-split">
+<div class="top">
+
+<div class="horizontal-split">
+<div class="left" id="top-left">
+
+<h1>asynchronous<span class="js">JS</span>cheatsheet</h1>
+<dl id="legend">
+  <dt>
+    <span class="promise pending">
+      <span class="bounce1"></span><span class="bounce2"></span><span class="bounce3"></span>
+    </span>
+  </dt>
+  <dd>
+    <strong>Pending</strong> promises can become either...
+  </dd>
+
+  <dt>
+    <span class="promise fulfilled">value</span>
+  </dt>
+  <dd>
+    <strong>Fulfilled</strong> with a <strong>value</strong>, or...
+  </dd>
+
+  <dt>
+    <span class="promise rejected">error</span>
+  </dt>
+  <dd>
+    <strong>Rejected</strong> with an <strong>error</strong>.
+  </dd>
+
+  <dt>
+    <span class="promise">outcome</span>
+  </dt>
+  <dd>
+    Either way, they are <strong>settled</strong> with an <strong>outcome</strong>.
+  </dd>
+</dl>
+
+</div>
+
+<section id="combining" class="right">
+<h2>Combining promises</h2>
+<div class="columns">
+<section>
+<p>Use <code>all()</code> to turn an <em>array of promises</em> into a <em>promise to an array</em>.</p>
+<div class="combine">
+<pre><code>Promise.<strong>all</strong>([
+  <span class="fulfilled promise">value1</span>,
+  <span class="fulfilled promise">value2</span>,
+  <span class="fulfilled promise">value3</span>,
+])
+</code></pre>
+<code class="arrow">-></code>
+<pre><code><span class="fulfilled promise auto">[value1
+  value2,
+  value3]</span></code></pre>
+</div>
+</section>
+
+<section>
+<p>If <em>any</em> promise is rejected, the error will be passed through.</p>
+<div class="combine">
+<pre><code>Promise.<strong>all</strong>([
+  <span class="pending promise"><span class="bounce1"></span><span class="bounce2"></span><span class="bounce3"></span></span>,
+  <span class="pending promise"><span class="bounce1"></span><span class="bounce2"></span><span class="bounce3"></span></span>,
+  <span class="rejected promise">error</span>,
+])
+</code></pre>
+<code class="arrow">-></code>
+<code><span class="rejected promise">error</span></code>
+</div>
+</section>
+
+<section>
+<p>Use <code>race()</code> instead to pass through the first <em>settled</em> promise.</p>
+<div class="combine">
+<pre><code>Promise.<strong>race</strong>([
+  <span class="pending promise"><span class="bounce1"></span><span class="bounce2"></span><span class="bounce3"></span></span>,
+  <span class="pending promise"><span class="bounce1"></span><span class="bounce2"></span><span class="bounce3"></span></span>,
+  <span class="fulfilled promise">value</span>,
+])
+</code></pre>
+<code class="arrow">-></code>
+<code><span class="fulfilled promise">value</span></code>
+</div>
+</section>
+</div>
+</section><!-- right -->
+
+</div><!-- horizontal-split -->
+
+</div><!-- top -->
+
+<div class="bottom">
+
+<div class="horizontal-split">
+<div class="right">
+
+<div class="vertical-split">
+<div class='top'>
+
+<div class="horizontal-split">
+
+<section id="then" class="left">
+  <h2>promise.<span class="keyword">then</span>( onFulfilled, onRejected )</h2>
+
+  <p>Calls <code>onFulfilled</code> once the promise is fulfilled.</p>
+
+  <code>
+    <span class="promise fulfilled">value</span>.<strong>then</strong>(<span class="function"><span class="value">value</span> => <span class="value">nextValue</span></span>, <span class="optional function">...</span>) -> <span class="promise fulfilled">nextValue</span>
+  </code>
+  <code>
+    <span class="promise fulfilled">value</span>.<strong>then</strong>(<span class="function"><span class="value">value</span> => <span class="promise">outcome</span></span>, <span class="optional function">...</span>) -> <span class="promise">outcome</span>
+  </code>
+  <code>
+    <span class="promise fulfilled">value</span>.<strong>then</strong>(<span class="function"><span class="value">value</span> => throw <span class="error">error</span></span>, <span class="optional function">...</span>) -> <span class="promise rejected">error</span>
+  </code>
+
+  <p>Calls <code>onRejected</code> if the promise is rejected.</p>
+
+  <code>
+    <span class="promise rejected">error</span>.<strong>then</strong>(<span class="optional function">...</span>, <span class="function"><span class="error">error</span> => <span class="value">value</span></span>) -> <span class="promise fulfilled">value</span>
+  </code>
+  <code>
+    <span class="promise rejected">error</span>.<strong>then</strong>(<span class="optional function">...</span>, <span class="function"><span class="error">error</span> => <span class="promise">outcome</span></span>) -> <span class="promise">outcome</span>
+  </code>
+  <code>
+    <span class="promise rejected">error</span>.<strong>then</strong>(<span class="optional function">...</span>, <span class="function"><span class="error">error</span> => throw <span class="error">nextError</span></span>) -> <span class="promise rejected">nextError</span>
+  </code>
+
+  <p>Passes errors through if <code>onRejected</code> is undefined.</p>
+
+  <code>
+    <span class="promise rejected">error</span>.<strong>then</strong>(<span class="function">...</span>) -> <span class="promise rejected">error</span>
+  </code>
+
+</section><!-- left-->
+
+<div class="right" id="non-then-handlers">
+
+<section id="catch">
+  <h2>promise.<span class="keyword">catch</span>( onRejected )</h2>
+
+  <p>Behaves identically to <code>then</code> when <code>onFulfilled</code> is omitted.</p>
+
+  <code>
+    <span class="promise rejected">error</span>.<strong>catch</strong>(<span class="function"><strong>onRejected</strong></span>) <=> <span class="promise rejected">error</span>.<strong>then</strong>(<span class="optional function">...</span>, <span class="function"><strong>onRejected</strong></span>)
+  </code>
+
+  <p>Passes fulfilled values through.</p>
+
+  <code>
+    <span class="promise fulfilled">value</span>.<strong>catch</strong>(<span class="function">...</span>) -> <span class="promise fulfilled">value</span>
+  </code>
+</section>
+
+<section id="finally">
+  <h2>promise.<span class="keyword">finally</span>( onFinally )</h2>
+
+  <p>Calls <code>onFinally</code> with <em>no arguments</em> once any outcome is available. Passes through input promise.</p>
+
+  <code>
+    <span class="promise">outcome</span>.<strong>finally</strong>(<span class="function">() => ...</span>) -> <span class="promise">outcome</span>
+  </code>
+
+  <p class="warning">
+    The <code>onFulfilled</code>, <code>onRejected</code> and <code>onFinally</code> functions will not be executed until at least the <strong>next tick</strong>, even for promises that already have an outcome.
+  </p>
+</section>
+
+</div><!-- right -->
+</div><!-- horizontal-split -->
+
+</div><!-- top -->
+<div class="bottom">
+
+<section id="making-promises">
+<h2>Making promises</h2>
+<div class="horizontal-split">
+<div class="left">
+<p>The function passed to <code>new Promise</code> will be executed synchronously.</p>
+<pre><code><strong>new Promise</strong>((<span class="green">resolve</span>, <span class="red">reject</span>) => {
+  doImportantStuff((<span class="error">error</span>, <span class="value">value</span>) => {
+    if (<span class="error">error</span>)
+      <span class="red">reject</span>(<span class="error">error</span>)
+    else
+      <span class="green">resolve</span>(<span class="value">value</span>)
+  })
+})</code></pre>
+</div>
+<div class="right margin">
+<section>
+<p>Use <code>resolve()</code> or <code>reject()</code> to create promises from values.</p>
+<code>Promise.<strong>resolve</strong>(<span class="value">value</span>) -> <span class="fulfilled promise">value</span></code>
+<code>Promise.<strong>reject</strong>(<span class="error">error</span>) -> <span class="rejected promise">error</span></code>
+<p>If you put a <em>fulfilled</em> promise into a <em>fulfilled</em> promise, they'll collapse into one.</p>
+<code>Promise.<strong>resolve</strong>(<span class="fulfilled promise">value</span>) -> <span class="fulfilled promise">value</span></code>
+</section>
+<hr />
+<p>Sometimes you might not need <code>reject</code>, or might not resolve to a value.</p>
+<pre><code>function delay(milliseconds) {
+  return <strong>new Promise</strong>(<span class="green">resolve</span> =>
+    setTimeout(<span class="green">resolve</span>, milliseconds)
+  )
+}</code></pre>
+</div>
+</div>
+</section>
+
+</div><!-- bottom -->
+</div><!-- vertical-split -->
+
+</div><!-- right -->
+
+<section id="async-await" class="left">
+  <h2><span class="keyword">async</span>/<span class="keyword">await</span></h2>
+
+  <p>Calling an <code>async</code> function <em>always</em> results in a promise.</p>
+
+  <code>
+    <span class="function">(<strong>async</strong> () => <span class="value">value</span>)</span>() -> <span class="fulfilled promise">value</span>
+  </code>
+  <code>
+    <span class="function">(<strong>async</strong> () => <span class="promise">outcome</span>)</span>() -> <span class="promise">outcome</span>
+  </code>
+  <code>
+    <span class="function">(<strong>async</strong> () => throw <span class="error">error</span>)</span>() -> <span class="rejected promise">error</span>
+  </code>
+
+  <p><code>await</code> waits for a promise to be fulfilled, then returns its value.</p>
+
+<pre><code><strong>async</strong> function() {
+  try {
+    let <span class="value">value</span> = <strong>await</strong> <span class="promise">outcome</span>
+    // ...
+  }
+  catch (<span class="error">error</span>) {
+    // ...
+  }
+}
+</code></pre>
+
+  <p>You can pass non-promise values to <code>await</code></p>
+
+<pre><code>const fn = <strong>async</strong> () => {
+  let <span class="value">value</span> = <strong>await</strong> <span class="value">value</span>
+  // ...
+}
+</code></pre>
+
+  <p class="warning">
+    <code>await</code> may only be used within <code>async</code> functions.
+  </p>
+
+  <p class="warning">
+    <code>await</code> will wait until at least the <strong>next tick</strong> before returning, even when awaiting already-fulfilled promises or non-promise values.
+  </p>
+
+<footer>
+  <div class="brand">
+    <img src="logo.png" alt="Frontend Armory Logo" />
+    <span class="frontend">Frontend</span> <span class="armory">Armory</span>
+  </div>
+  <div class="url">
+    frontarm.com
+  </div>
+</footer>
+
+</section> <!-- left -->
+
+</div><!-- horizontal-split -->
+
+</div><!-- bottom -->
+</div><!-- vertical-split -->
+</body>
+</html>
